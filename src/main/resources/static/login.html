@@ -251,7 +251,7 @@
           console.warn('Login failed', res.status, text);
           // for demo allow any credentials if backend is unreachable
           if(res.status === 0 || res.status === 404 || res.status === 502 || res.status === 504){
-            localStorage.setItem('isLoggedIn','true'); localStorage.setItem('username', email); window.location.href = 'index.html';
+            localStorage.setItem('isLoggedIn','true'); localStorage.setItem('username', username); window.location.href = 'Bookslot.html';
           } else {
             const errorData = JSON.parse(text);
             document.getElementById('loginMsg').innerHTML = '<span style="color:red">' + (errorData.error || 'Login failed. Please check your credentials.') + '</span>';

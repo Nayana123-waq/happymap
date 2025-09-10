@@ -16,13 +16,7 @@ import com.example.happymop.repository.ServiceRepository;
 public class BookingService {
     private final BookingRepository repo;
     private final ServiceRepository serviceRepo;
-    private final NotificationService notificationService;
-    
-    public BookingService(BookingRepository repo, ServiceRepository serviceRepo, NotificationService notificationService){ 
-        this.repo = repo; 
-        this.serviceRepo = serviceRepo; 
-        this.notificationService = notificationService;
-    }
+    public BookingService(BookingRepository repo, ServiceRepository serviceRepo){ this.repo = repo; this.serviceRepo = serviceRepo; }
 
     // compute total server-side from serviceIds (CSV of ids) and set amount/serviceName before saving
     public Booking create(Booking b){
@@ -51,33 +45,5 @@ public class BookingService {
     public List<Booking> all(){ return repo.findAll(); }
     public Optional<Booking> find(Long id){ return repo.findById(id); }
     public void delete(Long id){ repo.deleteById(id); }
-    
-    public List<Booking> getBookingsByWorker(String workerName) {
-        return repo.findByWorkerAssigned(workerName);
-    }
-    
-    public Booking updateBookingStatus(Long bookingId, String status) {
-        Optional<Booking> booking = repo.findById(bookingId);
-        if (booking.isPresent()) {
-            Booking b = booking.get();
-            String oldStatus = b.getStatus();
-            b.setStatus(status);
-            Booking updatedBooking = repo.save(b);
-            
-            // Send notification for any status change
-            if (!status.equals(oldStatus)) {
-                try {
-                    notificationService.sendStatusNotification(updatedBooking, status);
-                    System.out.println("Notification sent for booking #" + bookingId + " status change: " + oldStatus + " -> " + status);
-                } catch (Exception e) {
-                    // Log error but don't fail the booking update
-                    System.err.println("Failed to send status notification: " + e.getMessage());
-                }
-            }
-            
-            return updatedBooking;
-        }
-        return null;
-    }
 }
 

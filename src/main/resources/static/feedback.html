@@ -302,7 +302,7 @@
             const list = document.getElementById('feedbackList');
             list.innerHTML = '';
             try{
-                const res = await fetch('http://localhost:8080/api/feedbacks');
+                const res = await fetch('/api/feedbacks');
                 if(!res.ok) throw new Error('Failed to load feedbacks');
                 const all = await res.json();
                 if(!all || all.length === 0){ list.innerHTML = '<div class="item">No feedback yet.</div>'; return; }
@@ -328,58 +328,19 @@
 
         document.getElementById('feedbackForm').addEventListener('submit', async function(e){
             e.preventDefault();
-            
-            // Clear previous messages
-            document.getElementById('msg').textContent = '';
-            
-            try {
-                const ratingElement = document.querySelector('input[name="rating"]:checked');
-                if (!ratingElement) {
-                    throw new Error('Please select a rating');
-                }
-                
-                const rating = ratingElement.value;
-                const comments = document.getElementById('comments').value.trim();
-                const name = document.getElementById('name').value.trim();
-                const email = document.getElementById('email').value.trim();
-                
-                const payload = { 
-                    rating: parseInt(rating, 10), 
-                    comments, 
-                    name, 
-                    email 
-                };
-                
-                console.log('Submitting feedback:', payload);
-                
-                const res = await fetch('http://localhost:8080/api/feedbacks', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify(payload)
-                });
-                
-                console.log('Response status:', res.status, 'OK:', res.ok);
-                
-                if (!res.ok) {
-                    const errorText = await res.text();
-                    console.error('Server error response:', errorText);
-                    throw new Error(`Server returned ${res.status}: ${errorText}`);
-                }
-                
-                const result = await res.json();
-                console.log('Feedback submitted successfully:', result);
-                
+            const rating = document.querySelector('input[name="rating"]:checked').value;
+            const comments = document.getElementById('comments').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const payload = { rating: parseInt(rating,10), comments, name, email };
+            try{
+                const res = await fetch('/api/feedbacks', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+                if(!res.ok) throw new Error('Server returned ' + res.status);
                 document.getElementById('msg').textContent = 'Thanks — your feedback has been received.';
                 document.getElementById('feedbackForm').reset();
-                if(localStorage.getItem('username')) {
-                    document.getElementById('name').value = localStorage.getItem('username');
-                }
+                if(localStorage.getItem('username')) document.getElementById('name').value = localStorage.getItem('username');
                 await loadFeedbacks();
-                
-            } catch(err) { 
-                console.error('Feedback submission error:', err); 
-                document.getElementById('msg').textContent = 'Failed to send feedback: ' + err.message;
-            }
+            }catch(err){ console.error(err); document.getElementById('msg').textContent = 'Failed to send feedback.'; }
         });
 
         document.getElementById('clearBtn').addEventListener('click', function(){
