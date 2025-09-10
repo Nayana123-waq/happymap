@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Dashboard - Happy Mop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{
+        --brand:#6366f1;
+        --accent:#8b5cf6;
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --success-gradient: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+        --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        --shadow-light: 0 4px 20px rgba(0,0,0,0.08);
+        --shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
+        --shadow-heavy: 0 15px 40px rgba(0,0,0,0.15);
+        --border-radius: 16px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    body{
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+        color: #333;
+        margin: 0;
+        padding: 30px;
+        line-height: 1.6;
+    }
+    
+    .container{
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(20px);
+        padding: 25px 35px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-medium);
+        border: 1px solid rgba(255,255,255,0.2);
+        margin-bottom: 30px;
+    }
+    
+    h1{
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 20px 0;
+    }
+    
+    .login-box{
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(20px);
+        padding: 40px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-heavy);
+        border: 1px solid rgba(255,255,255,0.2);
+        max-width: 500px;
+        margin: 50px auto;
+        text-align: center;
+    }
+    
+    .login-box h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+    }
+    
+    .login-box input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid rgba(0,0,0,0.1);
+        border-radius: 12px;
+        font-size: 16px;
+        transition: var(--transition);
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(10px);
+        margin: 15px 0;
+    }
+    
+    .login-box input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .panel{
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(20px);
+        padding: 30px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-medium);
+        border: 1px solid rgba(255,255,255,0.2);
+        margin-bottom: 25px;
+        transition: var(--transition);
+    }
+    
+    .panel:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-heavy);
+    }
+    
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+    }
+    
+    th,td{
+        padding: 15px 12px;
+        text-align: left;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    th{
+        background: rgba(0,0,0,0.02);
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    tbody tr {
+        transition: var(--transition);
+    }
+    
+    tbody tr:hover {
+        background: rgba(0,120,212,0.05);
+    }
+    
+    .actions{
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .btn{
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        transition: var(--transition);
+        box-shadow: var(--shadow-light);
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .btn-danger{
+        background: var(--danger-gradient);
+        color: #fff;
+    }
+    
+    .btn-primary{
+        background: var(--primary-gradient);
+        color: #fff;
+    }
+    
+    .btn:not(.btn-primary):not(.btn-danger) {
+        background: rgba(255,255,255,0.9);
+        color: #666;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .btn:not(.btn-primary):not(.btn-danger):hover {
+        background: rgba(0,120,212,0.1);
+        color: var(--accent);
+        border-color: var(--accent);
+    }
+    
+    .muted{
+        color: #666;
+        font-size: 14px;
+        background: rgba(255,255,255,0.7);
+        padding: 10px 15px;
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .top-actions{
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .section-title{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    textarea, input[type="text"], input[type="password"], select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid rgba(0,0,0,0.1);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: var(--transition);
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(10px);
+    }
+    
+    textarea:focus, input:focus, select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
+        transform: translateY(-1px);
+    }
+    
+    textarea {
+        height: 120px;
+        resize: vertical;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+    
+    .stat-card {
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .stat-card strong {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+    }
+    
+    .filter-controls {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+        align-items: center;
+    }
+    
+    .filter-controls input, .filter-controls select {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    @media (max-width: 768px) {
+        body {
+            padding: 20px;
+        }
+        
+        header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+        }
+        
+        .panel {
+            padding: 20px;
+        }
+        
+        .section-title {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .top-actions {
+            justify-content: center;
+        }
+        
+        .filter-controls {
+            flex-direction: column;
+        }
+        
+        .filter-controls input, .filter-controls select {
+            min-width: auto;
+        }
+        
+        table {
+            font-size: 12px;
+        }
+        
+        th, td {
+            padding: 8px 6px;
+        }
+        
+        .actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .container {
+        animation: fadeInUp 0.8s ease-out;
+    }
+    
+    .panel {
+        animation: fadeInUp 0.8s ease-out;
+    }
+    
+    /* Success/Error Messages */
+    .success-msg {
+        background: rgba(139,92,246,0.1);
+        color: #6366f1;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-weight: 500;
+    }
+    
+    .error-msg {
+        background: rgba(244,67,54,0.1);
+        color: #c62828;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Admin Dashboard</h1>
+      <div class="top-actions">
+        <button id="refreshBtn" class="btn btn-primary">Refresh Data</button>
+        <button id="logoutBtn" class="btn">Logout</button>
+      </div>
+    </header>
+
+    <div id="authArea"></div>
+
+    <div id="dashboard" style="display:none">
+      <div class="panel">
+        <div class="section-title">
+          <h2>Bookings</h2>
+          <div class="actions">
+            <button id="exportBookings" class="btn btn-primary">Export JSON</button>
+            <button id="clearBookings" class="btn btn-danger">Clear All</button>
+          </div>
+        </div>
+        <div id="bookingsCount" class="muted"></div>
+        <div style="overflow:auto;margin-top:12px">
+          <table id="bookingsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Service</th>
+                <th>Worker</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Location</th>
+                <th>Paid</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <h2>Feedback</h2>
+          <div class="actions">
+            <button id="exportFeedback" class="btn btn-primary">Export JSON</button>
+            <button id="clearFeedback" class="btn btn-danger">Clear All</button>
+          </div>
+        </div>
+        <div id="feedbackCount" class="muted"></div>
+        <div style="margin-top:12px">
+          <table id="feedbackTable">
+            <thead>
+              <tr><th>#</th><th>Name</th><th>Rating</th><th>Comments</th><th>Email</th><th>Date</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Workers panel -->
+      <div class="panel">
+        <div class="section-title">
+          <h2>Workers</h2>
+          <div class="actions">
+            <button id="addWorkerBtn" class="btn btn-primary">Add Worker</button>
+          </div>
+        </div>
+        <div id="workersInfo" class="muted" style="margin-top:6px"></div>
+        <div style="margin-top:12px">
+          <table id="workersTable">
+            <thead>
+              <tr><th>ID</th><th>Name</th><th>Assigned</th><th>Completed</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <h2>Worker Applications</h2>
+          <div class="actions">
+            <button id="refreshApps" class="btn">Refresh</button>
+            <button id="clearApps" class="btn btn-danger">Clear All</button>
+          </div>
+        </div>
+        <div id="appsInfo" class="muted" style="margin-top:6px"></div>
+        <div style="margin-top:12px">
+          <table id="appsTable">
+            <thead>
+              <tr><th>ID</th><th>Name</th><th>Phone</th><th>Services</th><th>Area</th><th>Applied</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Quick Insights</h2>
+        <p class="muted">Search bookings and view basic stats (client-side filter).</p>
+        <div class="filter-controls">
+          <input id="bookingSearch" placeholder="Search user, service, worker or location">
+          <select id="statusFilter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="assigned">Assigned</option>
+            <option value="completed">Completed</option>
+          </select>
+          <button id="applyFilter" class="btn">Apply</button>
+          <button id="clearFilter" class="btn">Clear</button>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="muted">Total</div>
+            <strong id="statTotal">0</strong>
+          </div>
+          <div class="stat-card">
+            <div class="muted">Pending</div>
+            <strong id="statPending">0</strong>
+          </div>
+          <div class="stat-card">
+            <div class="muted">Assigned</div>
+            <strong id="statAssigned">0</strong>
+          </div>
+          <div class="stat-card">
+            <div class="muted">Completed</div>
+            <strong id="statCompleted">0</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // API_BASE configuration for IntelliJ server compatibility
+  const API_BASE = (window.location.protocol === 'file:' || window.location.origin === 'null' || window.location.port === '63342') ? 'http://localhost:8080' : window.location.origin;
+  
+  // Simple admin authentication for local demo
+  const ADMIN_KEY = 'isAdmin';
+  const ADMIN_PASS = 'admin123'; // change or remove for production
+
+  function showLogin(){
+    const authArea = document.getElementById('authArea');
+    authArea.innerHTML = `
+      <div class="login-box">
+        <h3>Admin Sign-in</h3>
+        <p class="muted">Enter admin password to view data (demo only).</p>
+        <input id="adminPass" type="password" placeholder="Password" style="width:100%;padding:8px;margin-top:8px"><br>
+        <div style="margin-top:10px">
+          <button id="adminLoginBtn" class="btn btn-primary">Sign In</button>
+        </div>
+        <div id="authMsg" class="muted" style="margin-top:10px"></div>
+      </div>
+    `;
+    document.getElementById('adminLoginBtn').addEventListener('click', function(){
+      const val = document.getElementById('adminPass').value;
+      if(val === ADMIN_PASS){
+        localStorage.setItem(ADMIN_KEY,'true');
+        document.getElementById('authMsg').textContent = 'Login successful! Loading dashboard...';
+        document.getElementById('authMsg').style.color = 'green';
+        setTimeout(() => renderDashboard(), 500);
+      } else {
+        document.getElementById('authMsg').textContent = 'Incorrect password. Try: admin123';
+        document.getElementById('authMsg').style.color = 'red';
+      }
+    });
+    
+    // Allow Enter key to login
+    document.getElementById('adminPass').addEventListener('keypress', function(e){
+      if(e.key === 'Enter') {
+        document.getElementById('adminLoginBtn').click();
+      }
+    });
+  }
+
+  function renderDashboard(){
+    document.getElementById('authArea').innerHTML = '';
+    document.getElementById('dashboard').style.display = 'block';
+    loadBookings();
+    loadFeedback();
+    loadWorkers();
+    loadApplications();
+  const lb = document.getElementById('logoutBtn'); if(lb) lb.onclick = adminLogout;
+  const rb = document.getElementById('refreshBtn'); if(rb) rb.onclick = refreshAllData;
+
+    document.getElementById('exportBookings').addEventListener('click', async function(){
+      try{ const res = await fetch(API_BASE + '/api/bookings'); const all = await res.json(); download('bookings.json', JSON.stringify(all, null, 2)); }catch(e){ alert('Failed to export bookings'); }
+    });
+    document.getElementById('exportFeedback').addEventListener('click', async function(){
+      try{ const res = await fetch(API_BASE + '/api/feedbacks'); const all = await res.json(); download('feedbacks.json', JSON.stringify(all, null, 2)); }catch(e){ alert('Failed to export feedback'); }
+    });
+
+    document.getElementById('clearBookings').addEventListener('click', async function(){
+      if(confirm('Clear all bookings? This cannot be undone.')){
+        try{ const res = await fetch(API_BASE + '/api/bookings'); const all = await res.json(); for(const b of all){ await fetch(API_BASE + '/api/bookings/' + b.id, { method: 'DELETE' }); } loadBookings(); }catch(e){ alert('Failed to clear bookings'); }
+      }
+    });
+    document.getElementById('clearFeedback').addEventListener('click', async function(){
+      if(confirm('Clear all feedback? This cannot be undone.')){
+        try{ const res = await fetch(API_BASE + '/api/feedbacks'); const all = await res.json(); for(const f of all){ await fetch(API_BASE + '/api/feedbacks/' + f.id, { method: 'DELETE' }).catch(()=>{}); } loadFeedback(); }catch(e){ alert('Failed to clear feedback'); }
+      }
+    });
+    document.getElementById('clearApps').addEventListener('click', async function(){
+      if(confirm('Clear all worker applications? This cannot be undone.')){
+        try{ const res = await fetch(API_BASE + '/api/admin/applications'); const all = await res.json(); for(const a of all){ await fetch(API_BASE + '/api/admin/applications/' + a.id + '/reject', { method: 'POST' }).catch(()=>{}); } loadApplications(); }catch(e){ alert('Failed to clear applications'); }
+      }
+    });
+
+    document.getElementById('addWorkerBtn').addEventListener('click', async function(){
+      const name = prompt('Enter worker name:');
+      if(name){
+        try{ const res = await fetch(API_BASE + '/api/workers', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name }) }); if(!res.ok) throw new Error('create worker failed'); loadWorkers(); loadBookings(); }catch(e){ alert('Failed to add worker'); }
+      }
+    });
+  }
+
+  function adminLogout(){
+    // clear admin and user demo flags and return to login UI without a full reload
+    localStorage.removeItem(ADMIN_KEY);
+    try{ localStorage.removeItem('isLoggedIn'); localStorage.removeItem('username'); }catch(e){}
+    // hide dashboard and show login form
+    const dash = document.getElementById('dashboard'); 
+    if(dash) dash.style.display = 'none';
+    // Clear any cached data
+    window.bookingsCache = [];
+    showLogin();
+    alert('Logged out successfully');
+  }
+
+  async function loadBookings(){
+    try{
+      console.log('Loading bookings from:', API_BASE + '/api/bookings');
+      const res = await fetch(API_BASE + '/api/bookings');
+      if(!res.ok) throw new Error('Failed to load bookings: ' + res.status + ' ' + res.statusText);
+      const raw = await res.json();
+      console.log('Loaded bookings:', raw);
+      const tbody = document.querySelector('#bookingsTable tbody');
+      tbody.innerHTML = '';
+      document.getElementById('bookingsCount').textContent = raw.length + ' booking(s)';
+      
+      if(raw.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#666;">No bookings found. Submit a booking from the frontend to see data here.</td></tr>';
+        return;
+      }
+      raw.slice().reverse().forEach(b => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(b.id||'')}</td>
+          <td>${escapeHtml(b.userName||b.user||'')}</td>
+          <td>${escapeHtml(b.serviceName||b.service||'')}</td>
+          <td>${escapeHtml(b.workerAssigned||'')}</td>
+          <td>${escapeHtml(b.date||'')}</td>
+          <td>${escapeHtml(b.time||'')}</td>
+          <td>${escapeHtml(b.location||'')}</td>
+          <td>${escapeHtml(b.paidWith||'')}</td>
+          <td>${escapeHtml(b.status||'pending')}</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-primary" data-assign="${b.id}">Assign</button>
+              <button class="btn" data-complete="${b.id}">Mark Complete</button>
+              <button class="btn btn-danger" data-id="${b.id}">Delete</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      // wire buttons
+      document.querySelectorAll('#bookingsTable button[data-id]').forEach(btn=> btn.addEventListener('click', function(){ deleteBooking(this.getAttribute('data-id')); }));
+      document.querySelectorAll('#bookingsTable button[data-assign]').forEach(btn=> btn.addEventListener('click', function(){ openAssignDialog(this.getAttribute('data-assign')); }));
+      document.querySelectorAll('#bookingsTable button[data-complete]').forEach(btn=> btn.addEventListener('click', function(){ markCompleted(this.getAttribute('data-complete')); }));
+      // cache bookings for client-side filters and insights
+      window.bookingsCache = raw.slice();
+      renderWorkerStats();
+      // update stats and wire filter controls
+      updateInsights();
+      document.getElementById('applyFilter')?.addEventListener('click', applyBookingFilter);
+      document.getElementById('clearFilter')?.addEventListener('click', function(){ document.getElementById('bookingSearch').value=''; document.getElementById('statusFilter').value=''; applyBookingFilter(); });
+    }catch(err){ console.error(err); document.getElementById('bookingsCount').textContent = 'Failed to load bookings'; }
+  }
+
+  // Missing functions for booking management
+  async function deleteBooking(id){
+    if(confirm('Delete this booking?')){
+      try{
+        const res = await fetch(API_BASE + '/api/bookings/' + id, { method: 'DELETE' });
+        if(!res.ok) throw new Error('Delete failed');
+        await loadBookings();
+      }catch(err){ console.error(err); alert('Failed to delete booking'); }
+    }
+  }
+
+  async function loadFeedback(){
+    try{
+      const res = await fetch(API_BASE + '/api/feedbacks');
+      if(!res.ok) throw new Error('Failed to load feedback');
+      const raw = await res.json();
+      const tbody = document.querySelector('#feedbackTable tbody');
+      tbody.innerHTML = '';
+      document.getElementById('feedbackCount').textContent = raw.length + ' feedback(s)';
+      raw.slice().reverse().forEach(f => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(f.id||'')}</td>
+          <td>${escapeHtml(f.name||'')}</td>
+          <td>${f.rating||0}★</td>
+          <td>${escapeHtml(f.comments||'')}</td>
+          <td>${escapeHtml(f.email||'')}</td>
+          <td>${new Date(f.createdAt||Date.now()).toLocaleString()}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteFeedback('${f.id}')">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }catch(err){ console.error(err); document.getElementById('feedbackCount').textContent = 'Failed to load feedback'; }
+  }
+
+  async function deleteFeedback(id){
+    if(confirm('Delete this feedback?')){
+      try{
+        const res = await fetch(API_BASE + '/api/feedbacks/' + id, { method: 'DELETE' });
+        if(!res.ok) throw new Error('Delete failed');
+        await loadFeedback();
+      }catch(err){ console.error(err); alert('Failed to delete feedback'); }
+    }
+  }
+
+  // Utility function for HTML escaping
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Download utility for export functions
+  function download(filename, content) {
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
+  // Refresh all data function
+  function refreshAllData() {
+    console.log('Refreshing all admin data...');
+    loadBookings();
+    loadFeedback();
+    loadWorkers();
+    loadApplications();
+    alert('Data refreshed successfully!');
+  }
+
+  function applyBookingFilter(){
+    const q = (document.getElementById('bookingSearch').value||'').toLowerCase().trim();
+    const status = document.getElementById('statusFilter').value;
+    const list = (window.bookingsCache||[]).filter(b=>{
+      if(status && String((b.status||'')).toLowerCase() !== String(status).toLowerCase()) return false;
+      if(!q) return true;
+      return String(b.userName||b.serviceName||b.workerAssigned||b.location||'').toLowerCase().includes(q);
+    });
+    // reuse rendering: clear table and render list
+    const tbody = document.querySelector('#bookingsTable tbody'); tbody.innerHTML = '';
+    list.slice().reverse().forEach(b => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(b.id||'')}</td>
+        <td>${escapeHtml(b.userName||b.user||'')}</td>
+        <td>${escapeHtml(b.serviceName||b.service||'')}</td>
+        <td>${escapeHtml(b.workerAssigned||'')}</td>
+        <td>${escapeHtml(b.date||'')}</td>
+        <td>${escapeHtml(b.time||'')}</td>
+        <td>${escapeHtml(b.location||'')}</td>
+        <td>${escapeHtml(b.paidWith||'')}</td>
+        <td>${escapeHtml(b.status||'pending')}</td>
+        <td>
+          <div class="actions">
+            <button class="btn btn-primary" data-assign="${b.id}">Assign</button>
+            <button class="btn" data-complete="${b.id}">Mark Complete</button>
+            <button class="btn btn-danger" data-id="${b.id}">Delete</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+    document.querySelectorAll('#bookingsTable button[data-id]').forEach(btn=> btn.addEventListener('click', function(){ deleteBooking(this.getAttribute('data-id')); }));
+    document.querySelectorAll('#bookingsTable button[data-assign]').forEach(btn=> btn.addEventListener('click', function(){ openAssignDialog(this.getAttribute('data-assign')); }));
+    document.querySelectorAll('#bookingsTable button[data-complete]').forEach(btn=> btn.addEventListener('click', function(){ markCompleted(this.getAttribute('data-complete')); }));
+    updateInsights();
+  }
+
+  function updateInsights(){
+    const all = window.bookingsCache||[];
+    document.getElementById('statTotal').textContent = all.length;
+    document.getElementById('statPending').textContent = all.filter(x=> (x.status||'').toLowerCase()==='pending').length;
+    document.getElementById('statAssigned').textContent = all.filter(x=> (x.status||'').toLowerCase()==='assigned').length;
+    document.getElementById('statCompleted').textContent = all.filter(x=> (x.status||'').toLowerCase()==='completed').length;
+  }
+
+  // Worker management
+  async function loadWorkers(){
+    try{
+      const res = await fetch(API_BASE + '/api/workers'); if(!res.ok) throw new Error('Failed to load workers');
+      const raw = await res.json();
+      const tbody = document.querySelector('#workersTable tbody'); tbody.innerHTML = '';
+      raw.forEach(w=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(w.id)}</td>
+          <td>${escapeHtml(w.name)}</td>
+          <td>${w.assignedCount||0}</td>
+          <td>${w.completedCount||0}</td>
+          <td><div class="actions"><button class="btn btn-danger" data-wid="${w.id}">Delete</button></div></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.querySelectorAll('#workersTable button[data-wid]').forEach(btn=> btn.addEventListener('click', function(){ deleteWorker(this.getAttribute('data-wid')); }));
+      document.getElementById('workersInfo').textContent = raw.length + ' worker(s) registered.';
+    }catch(err){ console.error(err); document.getElementById('workersInfo').textContent = 'Failed to load workers'; }
+  }
+
+  // Worker Applications
+  async function loadApplications(){
+    try{
+      console.log('Loading applications from:', API_BASE + '/api/admin/applications');
+      const res = await fetch(API_BASE + '/api/admin/applications');
+      console.log('Applications response status:', res.status);
+      if(!res.ok) throw new Error('Failed to load applications: ' + res.status + ' ' + res.statusText);
+      const raw = await res.json();
+      console.log('Applications data:', raw);
+      const tbody = document.querySelector('#appsTable tbody'); tbody.innerHTML = '';
+      document.getElementById('appsInfo').textContent = raw.length + ' application(s)';
+      raw.forEach(a=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${a.name}</td>
+          <td>${a.phone}</td>
+          <td>${a.services}</td>
+          <td>${a.area}</td>
+          <td>${a.experience}</td>
+          <td>${a.status}</td>
+          <td class="actions">
+            <button class="btn btn-primary" data-approve="${a.id}">Approve</button>
+            <button class="btn btn-danger" data-reject="${a.id}">Reject</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.querySelectorAll('#appsTable button[data-approve]').forEach(btn=> btn.addEventListener('click', function(){ approveApplication(this.getAttribute('data-approve')); }));
+      document.querySelectorAll('#appsTable button[data-reject]').forEach(btn=> btn.addEventListener('click', function(){ rejectApplication(this.getAttribute('data-reject')); }));
+    }catch(err){ 
+      console.error('Applications loading error:', err); 
+      document.getElementById('appsInfo').textContent = 'Failed to load applications: ' + err.message; 
+    }
+  }
+
+  async function approveApplication(id){
+    try{
+      const res = await fetch(API_BASE + '/api/admin/applications/' + id + '/approve', { method: 'POST' });
+      if(!res.ok) throw new Error('Approve failed');
+      await loadApplications(); await loadWorkers();
+      alert('Application approved and worker added.');
+    }catch(err){ console.error(err); alert('Failed to approve application'); }
+  }
+
+  async function rejectApplication(id){
+    try{ const res = await fetch(API_BASE + '/api/admin/applications/' + id + '/reject', { method: 'POST' }); if(!res.ok) throw new Error('Reject failed'); await loadApplications(); }catch(err){ console.error(err); alert('Failed to reject application'); }
+  }
+
+  document.getElementById('refreshApps')?.addEventListener('click', loadApplications);
+
+  // initial server-backed load
+  loadWorkers(); loadApplications();
+
+  async function addWorker(name){
+    try{ await fetch(API_BASE + '/api/workers', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name }) }); await loadWorkers(); await loadBookings(); }catch(err){ console.error(err); alert('Failed to add worker'); }
+  }
+
+  async function deleteWorker(id){
+    try{ const res = await fetch(API_BASE + '/api/workers/' + id, { method: 'DELETE' }); if(!res.ok) throw new Error('delete failed'); await loadWorkers(); await loadBookings(); }catch(err){ console.error(err); alert('Failed to delete worker'); }
+  }
+
+  function openAssignDialog(bookingId){
+    const name = prompt('Enter worker ID to assign (leave blank to cancel).\nUse shown worker IDs from Workers table.');
+    if(!name) return;
+    assignWorker(bookingId, name);
+  }
+
+  async function assignWorker(bookingId, workerId){
+    try{
+  // Fetch the booking by id, update the workerAssigned/status and send a PUT to update server-side
+  const bRes = await fetch(API_BASE + '/api/bookings/' + bookingId);
+  if(!bRes.ok) return alert('Booking not found');
+  const b = await bRes.json();
+  // fetch worker
+  const wRes = await fetch(API_BASE + '/api/workers/' + workerId);
+  if(!wRes.ok) return alert('Worker not found');
+  const w = await wRes.json();
+  b.workerAssigned = w.name;
+  b.status = 'assigned';
+  const upd = await fetch(API_BASE + '/api/bookings/' + bookingId, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(b) });
+  if(!upd.ok) throw new Error('Update failed');
+  await loadBookings(); await loadWorkers();
+    }catch(err){ console.error(err); alert('Failed to assign worker'); }
+  }
+
+  async function markCompleted(bookingId){
+    try{
+  const res = await fetch(API_BASE + '/api/bookings/' + bookingId);
+  if(!res.ok) return alert('Booking not found');
+  const b = await res.json();
+  b.status = 'completed';
+  const upd = await fetch(API_BASE + '/api/bookings/' + bookingId, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(b) });
+  if(!upd.ok) throw new Error('Update failed');
+  await loadBookings(); await loadWorkers();
+    }catch(err){ console.error(err); alert('Failed to mark completed'); }
+  }
+
+  function renderWorkerStats(){
+    // Optionally fetch aggregated stats from server. For now this is a no-op.
+  }
+
+  // Initial load of server data
+  loadWorkers(); loadApplications();
+
+  // Init
+  if(localStorage.getItem(ADMIN_KEY) === 'true'){
+    renderDashboard();
+  } else {
+    showLogin();
+  }
+</script>
+</body>
+</html>

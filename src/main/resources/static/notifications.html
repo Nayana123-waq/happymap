@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Notifications - HappyMop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --brand: #6366f1;
+            --accent: #8b5cf6;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --shadow-light: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .notifications-container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .notification-card {
+            background: rgba(255,255,255,0.9);
+            border-left: 4px solid var(--success);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition);
+        }
+
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-id {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .notification-time {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .notification-message {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .notification-details {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-sent {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-delivered {
+            background: rgba(59, 130, 246, 0.2);
+            color: #2563eb;
+        }
+
+        .status-failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .btn {
+            background: var(--primary-gradient);
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .notification-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .notification-details {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-bell"></i> Customer Notifications</h1>
+            <p>Track completion notifications sent to customers</p>
+            <button onclick="loadNotifications()" class="btn">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalNotifications">0</div>
+                <div class="stat-label">Total Notifications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="sentNotifications">0</div>
+                <div class="stat-label">Sent Successfully</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayNotifications">0</div>
+                <div class="stat-label">Today's Notifications</div>
+            </div>
+        </div>
+
+        <div class="notifications-container">
+            <h3><i class="fas fa-list"></i> Recent Notifications</h3>
+            <div id="notificationsList"></div>
+        </div>
+    </div>
+
+    <script>
+        let notifications = [];
+
+        async function loadNotifications() {
+            try {
+                const response = await fetch('http://localhost:8080/api/notifications');
+                if (!response.ok) {
+                    throw new Error('Failed to load notifications');
+                }
+                
+                notifications = await response.json();
+                displayNotifications();
+                updateStats();
+                
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                document.getElementById('notificationsList').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>Error Loading Notifications</h4>
+                        <p>Unable to load notifications. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayNotifications() {
+            const container = document.getElementById('notificationsList');
+            
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <h4>No Notifications Yet</h4>
+                        <p>Customer notifications will appear here when work is completed.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort notifications by creation time (newest first)
+            const sortedNotifications = [...notifications].sort((a, b) => 
+                new Date(b.createdAt) - new Date(a.createdAt)
+            );
+
+            container.innerHTML = sortedNotifications.map(notification => `
+                <div class="notification-card">
+                    <div class="notification-header">
+                        <div class="notification-id">
+                            Notification #${notification.id} 
+                            <span class="status-badge status-${notification.status}">${notification.status}</span>
+                        </div>
+                        <div class="notification-time">
+                            ${new Date(notification.createdAt).toLocaleString()}
+                        </div>
+                    </div>
+                    
+                    <div class="notification-message">
+                        ${notification.message}
+                    </div>
+                    
+                    <div class="notification-details">
+                        <div><strong>Customer:</strong> ${notification.customerName}</div>
+                        <div><strong>Phone:</strong> ${notification.customerPhone}</div>
+                        <div><strong>Booking ID:</strong> #${notification.bookingId}</div>
+                        <div><strong>Type:</strong> ${notification.type}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const total = notifications.length;
+            const sent = notifications.filter(n => n.status === 'sent').length;
+            
+            // Calculate today's notifications
+            const today = new Date().toDateString();
+            const todayCount = notifications.filter(n => 
+                new Date(n.createdAt).toDateString() === today
+            ).length;
+            
+            document.getElementById('totalNotifications').textContent = total;
+            document.getElementById('sentNotifications').textContent = sent;
+            document.getElementById('todayNotifications').textContent = todayCount;
+        }
+
+        // Load notifications on page load
+        document.addEventListener('DOMContentLoaded', loadNotifications);
+    </script>
+</body>
+</html>

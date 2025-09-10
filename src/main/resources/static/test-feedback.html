@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback Test</title>
+</head>
+<body>
+    <h1>Feedback Test</h1>
+    <button onclick="testFeedback()">Test Feedback Submission</button>
+    <div id="result"></div>
+
+    <script>
+        async function testFeedback() {
+            const payload = { 
+                rating: 5, 
+                comments: "Test feedback from browser", 
+                name: "Test User", 
+                email: "test@example.com" 
+            };
+            
+            try {
+                console.log('Sending payload:', payload);
+                const res = await fetch('/api/feedbacks', { 
+                    method: 'POST', 
+                    headers: {'Content-Type':'application/json'}, 
+                    body: JSON.stringify(payload)
+                });
+                
+                console.log('Response status:', res.status);
+                console.log('Response ok:', res.ok);
+                
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    console.error('Error response:', errorText);
+                    throw new Error('Server returned ' + res.status + ': ' + errorText);
+                }
+                
+                const result = await res.json();
+                console.log('Success result:', result);
+                document.getElementById('result').innerHTML = 'SUCCESS: ' + JSON.stringify(result);
+                
+            } catch(err) { 
+                console.error('Caught error:', err); 
+                document.getElementById('result').innerHTML = 'ERROR: ' + err.message;
+            }
+        }
+    </script>
+</body>
+</html>
