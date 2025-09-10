@@ -12,7 +12,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable() // API is called from same-origin JS; if you enable csrf, adapt client to send token
+            .csrf(csrf -> csrf.disable()) // API is called from same-origin JS; if you enable csrf, adapt client to send token
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/users/**", "/api/bookings/**", "/api/workers/**", "/api/admin/applications/**", "/api/services/**", "/api/images/**", "/**/*.html", "/", "/index.html", "/static/**", "/**").permitAll()
                 .anyRequest().permitAll()

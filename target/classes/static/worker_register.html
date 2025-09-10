@@ -263,9 +263,6 @@
         <label for="area">Preferred areas / City</label>
         <input id="area" type="text" placeholder="e.g., Bangalore, Indiranagar">
 
-        <label for="wpassword">Set Password</label>
-        <input id="wpassword" type="password" required placeholder="Choose a secure password for login">
-
         <button class="btn" type="submit">Submit Application</button>
         <div id="resp" class="muted"></div>
       </form>
@@ -280,14 +277,13 @@
     const name = document.getElementById('wname').value.trim();
     const email = document.getElementById('wemail').value.trim();
     const phone = document.getElementById('wphone').value.trim();
-    const password = document.getElementById('wpassword').value.trim();
     const experience = document.getElementById('experience').value.trim();
     const area = document.getElementById('area').value.trim();
     const services = Array.from(document.querySelectorAll('.checkboxes input:checked')).map(i=>i.value);
     const respEl = document.getElementById('resp');
-    if(!name || !phone || !password){ respEl.textContent = 'Please provide name, phone, and password.'; return; }
+    if(!name || !phone){ respEl.textContent = 'Please provide name and phone.'; return; }
 
-  const payload = { name, email, phone, password, services: services.join(','), experience, area };
+  const payload = { name, email, phone, services: services.join(','), experience, area };
     try{
       const API_BASE = (window.location.protocol === 'file:' || window.location.origin === 'null' || window.location.port === '63342') ? 'http://localhost:8080' : window.location.origin;
       const res = await fetch(API_BASE + '/api/admin/applications', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)});
