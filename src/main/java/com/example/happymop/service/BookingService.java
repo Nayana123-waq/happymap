@@ -45,5 +45,21 @@ public class BookingService {
     public List<Booking> all(){ return repo.findAll(); }
     public Optional<Booking> find(Long id){ return repo.findById(id); }
     public void delete(Long id){ repo.deleteById(id); }
+    
+    // Get bookings by worker name
+    public List<Booking> getBookingsByWorker(String workerName) {
+        return repo.findByWorkerAssigned(workerName);
+    }
+    
+    // Update booking status
+    public Booking updateBookingStatus(Long bookingId, String status) {
+        Optional<Booking> bookingOpt = repo.findById(bookingId);
+        if (bookingOpt.isPresent()) {
+            Booking booking = bookingOpt.get();
+            booking.setStatus(status);
+            return repo.save(booking);
+        }
+        return null;
+    }
 }
 
